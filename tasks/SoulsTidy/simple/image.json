@@ -63,6 +63,24 @@
     "description": "立即进食"
   },
   {
+    "itemName": "st_feed_confirm_dialog",
+    "imageName": "simple_st_feed_confirm_dialog.png",
+    "roiFront": "457,268,398,63",
+    "roiBack": "420,245,455,115",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "按进食习惯吞噬已弃置御魂的确认弹窗"
+  },
+  {
+    "itemName": "st_feed_confirm",
+    "imageName": "simple_st_feed_confirm.png",
+    "roiFront": "665,408,178,64",
+    "roiBack": "630,385,230,105",
+    "method": "Template matching",
+    "threshold": 0.85,
+    "description": "贪吃鬼吞噬确认"
+  },
+  {
     "itemName": "st_unselected",
     "imageName": "simple_st_unselected.png",
     "roiFront": "542,342,38,37",

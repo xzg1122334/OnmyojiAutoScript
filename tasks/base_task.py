@@ -654,6 +654,10 @@ class BaseTask(GlobalGameAssets, CostumeBase):
     #  ---------------------------------------------------------------------------------------------------------------
     #
     #  ---------------------------------------------------------------------------------------------------------------
+    def ui_reward_appear(self) -> bool:
+        """识别旧版标题或当前大字标题的获得奖励弹窗。"""
+        return self.appear(self.I_UI_REWARD, threshold=0.6) or self.appear(self.I_UI_REWARD_LARGE)
+
     def ui_reward_appear_click(self, screenshot=False) -> bool:
         """
         如果出现 ‘获得奖励’ 就点击
@@ -661,7 +665,9 @@ class BaseTask(GlobalGameAssets, CostumeBase):
         """
         if screenshot:
             self.screenshot()
-        return self.appear_then_click(self.I_UI_REWARD, action=self.C_UI_REWARD, interval=0.4, threshold=0.6)
+        if self.appear_then_click(self.I_UI_REWARD, action=self.C_UI_REWARD, interval=0.4, threshold=0.6):
+            return True
+        return self.appear_then_click(self.I_UI_REWARD_LARGE, action=self.C_UI_REWARD, interval=0.4)
 
     def ui_get_reward(self, click_image: RuleImage | RuleOcr | RuleClick, click_interval: float = 1):
         """
@@ -676,12 +682,13 @@ class BaseTask(GlobalGameAssets, CostumeBase):
         while 1:
             self.screenshot()
 
-            if self.ui_reward_appear_click():
+            if self.ui_reward_appear():
+                self.ui_reward_appear_click()
                 sleep(0.5)
                 while 1:
                     self.screenshot()
                     # 等待动画结束
-                    if not self.appear(self.I_UI_REWARD, threshold=0.6):
+                    if not self.ui_reward_appear():
                         logger.info('Get reward success')
                         break
 

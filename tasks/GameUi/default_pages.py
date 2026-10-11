@@ -368,6 +368,7 @@ page_reward = Page(
         GeneralBattleAssets.I_REWARD_SOUL_5,
         GeneralBattleAssets.I_REWARD_SOUL_6,
         GlobalGameAssets.I_UI_REWARD,
+        GlobalGameAssets.I_UI_REWARD_LARGE,
     ),
     category="global",
     priority=25

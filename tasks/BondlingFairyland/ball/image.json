@@ -70,5 +70,14 @@
     "method": "Template matching",
     "threshold": 0.8,
     "description": "地域页面"
+  },
+  {
+    "itemName": "plate_limit_dialog",
+    "imageName": "ball_plate_limit_dialog.png",
+    "roiFront": "425,295,432,29",
+    "roiBack": "400,275,480,70",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "式盘数量上限继续挑战弹窗：上限，无法再次获取，是否继续"
   }
 ]

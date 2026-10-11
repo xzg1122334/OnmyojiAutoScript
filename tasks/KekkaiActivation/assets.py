@@ -66,6 +66,10 @@ class KekkaiActivationAssets:
 	I_A_DEMOUNT = RuleImage(roi_front=(939,575,55,47), roi_back=(903,551,107,91), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/a/a_a_demount.png")
 	# 斗鱼3 
 	I_A_HARVEST_FISH_3 = RuleImage(roi_front=(891,165,57,39), roi_back=(854,128,160,174), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/a/a_a_harvest_fish_3.png")
+	# 激活结界卡时的位置一公开、位置二私有确认弹窗
+	I_A_ACTIVATION_CONFIRM_DIALOG = RuleImage(roi_front=(450,260,410,62), roi_back=(420,230,465,140), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/a/a_a_activation_confirm_dialog.png")
+	# 寄养位置确认弹窗的黄色确定按钮
+	I_A_ACTIVATION_CONFIRM = RuleImage(roi_front=(677,383,177,61), roi_back=(635,355,255,140), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/a/a_a_activation_confirm.png")
 
 
 	# Image Rule Assets
@@ -86,22 +90,22 @@ class KekkaiActivationAssets:
 
 
 	# Image Rule Assets
-	# description 
-	I_CARDS_KAIKO_6 = RuleImage(roi_front=(193,204,89,73), roi_back=(169,148,130,501), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_6.png")
-	# description 
-	I_CARDS_KAIKO_5 = RuleImage(roi_front=(191,345,88,58), roi_back=(172,162,126,488), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_5.png")
-	# description 
-	I_CARDS_KAIKO_4 = RuleImage(roi_front=(192,354,90,22), roi_back=(179,165,116,482), threshold=0.85, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_4.png")
-	# description 
-	I_CARDS_KAIKO_3 = RuleImage(roi_front=(192,187,89,66), roi_back=(183,169,109,474), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_3.png")
-	# description 
-	I_CARDS_FISH_6 = RuleImage(roi_front=(193,183,87,91), roi_back=(178,169,110,474), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_6.png")
-	# description 
-	I_CARDS_FISH_5 = RuleImage(roi_front=(192,329,88,90), roi_back=(176,155,116,492), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_5.png")
-	# description 
-	I_CARDS_FISH_4 = RuleImage(roi_front=(192,409,87,21), roi_back=(176,175,118,473), threshold=0.7, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_4.png")
-	# description 
-	I_CARDS_FISH_3 = RuleImage(roi_front=(193,314,86,64), roi_back=(188,164,100,482), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_3.png")
+	# 太鼓6星：完整星级行（含灰色未亮图标）
+	I_CARDS_KAIKO_6 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_6.png")
+	# 太鼓5星：完整星级行（含灰色未亮图标）
+	I_CARDS_KAIKO_5 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_5.png")
+	# 太鼓4星：完整星级行（含灰色未亮图标）
+	I_CARDS_KAIKO_4 = RuleImage(roi_front=(193,200,90,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_4.png")
+	# 太鼓3星：完整星级行（含灰色未亮图标）
+	I_CARDS_KAIKO_3 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_kaiko_3.png")
+	# 斗鱼6星：完整星级行（含灰色未亮图标）
+	I_CARDS_FISH_6 = RuleImage(roi_front=(193,200,87,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_6.png")
+	# 斗鱼5星：完整星级行（含灰色未亮图标）
+	I_CARDS_FISH_5 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_5.png")
+	# 斗鱼4星：完整星级行（含灰色未亮图标）
+	I_CARDS_FISH_4 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_4.png")
+	# 斗鱼3星：完整星级行（含灰色未亮图标）
+	I_CARDS_FISH_3 = RuleImage(roi_front=(193,200,89,25), roi_back=(169,148,130,501), threshold=0.9, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_fish_3.png")
 	# description 
 	I_CARDS_MOON_6 = RuleImage(roi_front=(189,186,89,88), roi_back=(183,167,100,480), threshold=0.8, method="Template matching", file="./tasks/KekkaiActivation/cards/cards_cards_moon_6.png")
 	# description 

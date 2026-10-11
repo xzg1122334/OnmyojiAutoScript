@@ -2,74 +2,74 @@
   {
     "itemName": "cards_kaiko_6",
     "imageName": "cards_cards_kaiko_6.png",
-    "roiFront": "193,204,89,73",
+    "roiFront": "193,200,89,25",
     "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "太鼓6星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_kaiko_5",
     "imageName": "cards_cards_kaiko_5.png",
-    "roiFront": "191,345,88,58",
-    "roiBack": "172,162,126,488",
+    "roiFront": "193,200,89,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "太鼓5星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_kaiko_4",
     "imageName": "cards_cards_kaiko_4.png",
-    "roiFront": "192,354,90,22",
-    "roiBack": "179,165,116,482",
+    "roiFront": "193,200,90,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.85,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "太鼓4星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_kaiko_3",
     "imageName": "cards_cards_kaiko_3.png",
-    "roiFront": "192,187,89,66",
-    "roiBack": "183,169,109,474",
+    "roiFront": "193,200,89,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "太鼓3星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_fish_6",
     "imageName": "cards_cards_fish_6.png",
-    "roiFront": "193,183,87,91",
-    "roiBack": "178,169,110,474",
+    "roiFront": "193,200,87,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "斗鱼6星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_fish_5",
     "imageName": "cards_cards_fish_5.png",
-    "roiFront": "192,329,88,90",
-    "roiBack": "176,155,116,492",
+    "roiFront": "193,200,89,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "斗鱼5星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_fish_4",
     "imageName": "cards_cards_fish_4.png",
-    "roiFront": "192,409,87,21",
-    "roiBack": "176,175,118,473",
+    "roiFront": "193,200,89,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.7,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "斗鱼4星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_fish_3",
     "imageName": "cards_cards_fish_3.png",
-    "roiFront": "193,314,86,64",
-    "roiBack": "188,164,100,482",
+    "roiFront": "193,200,89,25",
+    "roiBack": "169,148,130,501",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "斗鱼3星：完整星级行（含灰色未亮图标）"
   },
   {
     "itemName": "cards_moon_6",

@@ -128,11 +128,11 @@
   {
     "itemName": "sou_switch_sure_12",
     "imageName": "sk12_sou_switch_sure_12.png",
-    "roiFront": "702,401,116,55",
-    "roiBack": "690,399,148,64",
+    "roiFront": "665,408,177,63",
+    "roiBack": "630,385,255,115",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "预设御魂更换弹窗的黄色确定按钮"
   },
   {
     "itemName": "soul_preset_12",

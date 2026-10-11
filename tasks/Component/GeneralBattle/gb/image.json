@@ -92,11 +92,11 @@
   {
     "itemName": "exit_ensure",
     "imageName": "gb_exit_ensure.png",
-    "roiFront": "674,388,135,63",
-    "roiBack": "674,388,135,63",
+    "roiFront": "665,408,177,63",
+    "roiBack": "630,385,255,115",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "退出确认"
+    "threshold": 0.9,
+    "description": "退出战斗弹窗的黄色确定按钮"
   },
   {
     "itemName": "friends",

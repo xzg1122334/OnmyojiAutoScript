@@ -1,0 +1,47 @@
+[
+  {
+    "itemName": "check_main_18",
+    "imageName": "main18_check_main_18.png",
+    "roiFront": "551,110,37,56",
+    "roiBack": "510,103,135,95",
+    "method": "Template matching",
+    "threshold": 0.8,
+    "description": "缘结之庭庭院判定"
+  },
+  {
+    "itemName": "main_goto_exploration_18",
+    "imageName": "main18_main_goto_exploration_18.png",
+    "roiFront": "551,110,37,56",
+    "roiBack": "510,103,135,95",
+    "method": "Template matching",
+    "threshold": 0.75,
+    "description": "探索"
+  },
+  {
+    "itemName": "main_goto_summon_18",
+    "imageName": "main18_main_goto_summon_18.png",
+    "roiFront": "970,218,28,45",
+    "roiBack": "920,180,125,125",
+    "method": "Template matching",
+    "threshold": 0.7,
+    "description": "召唤屋"
+  },
+  {
+    "itemName": "main_goto_town_18",
+    "imageName": "main18_main_goto_town_18.png",
+    "roiFront": "693,346,25,38",
+    "roiBack": "665,317,92,86",
+    "method": "Template matching",
+    "threshold": 0.75,
+    "description": "町中"
+  },
+  {
+    "itemName": "pet_house_18",
+    "imageName": "main18_pet_house_18.png",
+    "roiFront": "1070,18,29,30",
+    "roiBack": "1040,4,72,60",
+    "method": "Template matching",
+    "threshold": 0.8,
+    "description": "宠物屋"
+  }
+]

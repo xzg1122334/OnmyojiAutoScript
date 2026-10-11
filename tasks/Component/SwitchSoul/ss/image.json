@@ -56,11 +56,11 @@
   {
     "itemName": "sou_switch_sure",
     "imageName": "ss_sou_switch_sure.png",
-    "roiFront": "668,401,180,61",
-    "roiBack": "668,401,180,61",
+    "roiFront": "665,408,177,63",
+    "roiBack": "630,385,255,115",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "description"
+    "threshold": 0.9,
+    "description": "预设御魂更换弹窗的黄色确定按钮"
   },
   {
     "itemName": "sou_check_in",
@@ -160,5 +160,14 @@
     "method": "Template matching",
     "threshold": 0.8,
     "description": "误触点到式神检查"
+  },
+  {
+    "itemName": "sou_switch_dialog",
+    "imageName": "ss_sou_switch_dialog.png",
+    "roiFront": "423,285,164,34",
+    "roiBack": "395,255,225,95",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "即将更换式神的预设御魂：固定前缀，不包含式神名称"
   }
 ]

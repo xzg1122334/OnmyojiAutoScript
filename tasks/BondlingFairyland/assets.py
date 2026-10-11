@@ -27,6 +27,8 @@ class BondlingFairylandAssets:
 	I_BALL_AREA = RuleImage(roi_front=(61,631,50,48), roi_back=(8,582,138,137), threshold=0.8, method="Template matching", file="./tasks/BondlingFairyland/ball/ball_ball_area.png")
 	# 地域页面 
 	I_CHECK_AREA = RuleImage(roi_front=(489,377,238,95), roi_back=(454,337,314,170), threshold=0.8, method="Template matching", file="./tasks/BondlingFairyland/ball/ball_check_area.png")
+	# 式盘数量上限继续挑战弹窗：上限，无法再次获取，是否继续
+	I_PLATE_LIMIT_DIALOG = RuleImage(roi_front=(425,295,432,29), roi_back=(400,275,480,70), threshold=0.9, method="Template matching", file="./tasks/BondlingFairyland/ball/ball_plate_limit_dialog.png")
 
 
 	# Click Rule Assets

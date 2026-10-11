@@ -34,6 +34,10 @@ class SoulsTidyAssets:
 	I_ST_GREED_HABIT = RuleImage(roi_front=(817,529,165,61), roi_back=(817,529,165,61), threshold=0.8, method="Template matching", file="./tasks/SoulsTidy/simple/simple_st_greed_habit.png")
 	# 立即进食 
 	I_ST_FEED_NOW = RuleImage(roi_front=(929,593,73,65), roi_back=(929,593,73,65), threshold=0.8, method="Template matching", file="./tasks/SoulsTidy/simple/simple_st_feed_now.png")
+	# 按进食习惯吞噬已弃置御魂的确认弹窗
+	I_ST_FEED_CONFIRM_DIALOG = RuleImage(roi_front=(457,268,398,63), roi_back=(420,245,455,115), threshold=0.9, method="Template matching", file="./tasks/SoulsTidy/simple/simple_st_feed_confirm_dialog.png")
+	# 贪吃鬼吞噬确认
+	I_ST_FEED_CONFIRM = RuleImage(roi_front=(665,408,178,64), roi_back=(630,385,230,105), threshold=0.85, method="Template matching", file="./tasks/SoulsTidy/simple/simple_st_feed_confirm.png")
 	# 未选中 
 	I_ST_UNSELECTED = RuleImage(roi_front=(542,342,38,37), roi_back=(542,342,38,37), threshold=0.8, method="Template matching", file="./tasks/SoulsTidy/simple/simple_st_unselected.png")
 	# 关闭贪吃鬼 

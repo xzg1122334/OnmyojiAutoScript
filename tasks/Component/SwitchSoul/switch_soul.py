@@ -7,6 +7,8 @@ from typing import Union
 from module.atom.click import RuleClick
 from module.atom.long_click import RuleLongClick
 from module.atom.ocr import RuleOcr
+from module.base.timer import Timer
+from module.exception import GameStuckError
 from tasks.base_task import BaseTask
 from tasks.Component.SwitchSoul.assets import SwitchSoulAssets
 from module.logger import logger
@@ -118,23 +120,53 @@ class SwitchSoul(BaseTask, SwitchSoulAssets):
             sleep(0.5)
         # 点击队伍
         target_team = get_team_asset(team)
-        for i in range(3):
-            sleep(0.8)
-            self.screenshot()
-            if self.appear(self.I_SOU_SWITCH_SURE):
-                while 1:
-                    self.click(self.I_SOU_SWITCH_SURE, 3)
-                    self.screenshot()
-                    if self.appear_then_click(self.I_CHECK_BLOCK, 3):
-                        continue
-                    if not self.appear(self.I_SOU_SWITCH_SURE):
-                        break
-                continue
-            if not self.appear_then_click(target_team, interval=3):
-                logger.warning(f'Click team {team} failed in group {group}')
-        # 兜底若还出现确认按钮则点击
-        self.ui_click_until_disappear(self.I_SOU_SWITCH_SURE)
+        self._apply_soul_preset(
+            lambda: self.appear_then_click(target_team, interval=3),
+            f'group {group} team {team}',
+        )
         logger.info(f'Switch soul_one group {group} team {team}')
+
+    def _apply_soul_preset(self, select_team, description: str) -> None:
+        """确认更换御魂；两次成功点击仍无弹窗时按已装备处理。"""
+        timeout = Timer(30).start()
+        confirmed = False
+        popup_seen = False
+        closed_frames = 0
+        attempts = 0
+        while not timeout.reached():
+            self.screenshot()
+            if self.appear(self.I_SOU_SWITCH_DIALOG):
+                popup_seen = True
+                closed_frames = 0
+                if self.appear_then_click(self.I_SOU_SWITCH_SURE, interval=0.8):
+                    confirmed = True
+                    logger.info(f'Confirm preset souls: {description}')
+                sleep(0.2)
+                continue
+            if self.appear(self.I_SOU_SWITCH_SURE):
+                popup_seen = True
+                # 黄色按钮仍在但弹窗内容没有匹配时，不点击未知确认框。
+                closed_frames = 0
+                sleep(0.2)
+                continue
+            if self.appear_then_click(self.I_CHECK_BLOCK, interval=0.8):
+                attempts = 0
+                closed_frames = 0
+                continue
+            if confirmed or (attempts >= 2 and not popup_seen):
+                closed_frames += 1
+                if closed_frames >= 2:
+                    if not confirmed:
+                        logger.info(f'两次点击目标队伍均无确认弹窗，按御魂已装备继续: {description}')
+                    return
+                sleep(0.2)
+                continue
+            if attempts < 2 and select_team():
+                attempts += 1
+                sleep(1.5 if attempts == 2 else 0.8)
+            else:
+                sleep(0.2)
+        raise GameStuckError(f'未完成预设御魂切换确认: {description}，停止本次任务')
 
     def switch_souls(self, target: tuple or list[tuple]) -> None:
         """
@@ -244,17 +276,13 @@ class SwitchSoul(BaseTask, SwitchSoulAssets):
         # 选中分组
         logger.info(f'Select team {teamName}')
         # 切换御魂
-        cnt_click: int = 0
         self.O_SS_TEAM_NAME.keyword = teamName
-        while 1:
-            self.screenshot()
-            if cnt_click >= 4:
-                break
-            if self.appear_then_click(self.I_SOU_SWITCH_SURE, interval=0.8):
-                continue
-            if self.ocr_appear_click_by_rule(self.O_SS_TEAM_NAME, self.I_SOU_CLICK_PRESENT, interval=1.5):
-                cnt_click += 1
-                continue
+        self._apply_soul_preset(
+            lambda: self.ocr_appear_click_by_rule(
+                self.O_SS_TEAM_NAME, self.I_SOU_CLICK_PRESENT, interval=1.5,
+            ),
+            f'group {groupName} team {teamName}',
+        )
         logger.info(f'Switch soul_one group {groupName} team {teamName}')
 
     def ocr_appear_click_by_rule(self,

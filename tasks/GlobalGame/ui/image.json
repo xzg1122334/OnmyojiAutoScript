@@ -106,5 +106,14 @@
     "method": "Template matching",
     "threshold": 0.8,
     "description": "弯曲返回按钮"
+  },
+  {
+    "itemName": "ui_reward_large",
+    "imageName": "ui_ui_reward_large.png",
+    "roiFront": "520,210,250,65",
+    "roiBack": "465,165,360,135",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "获得奖励弹窗的大字金色标题"
   }
 ]

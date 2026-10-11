@@ -308,20 +308,20 @@
   {
     "itemName": "i_no_default",
     "imageName": "gi_i_no_default.png",
-    "roiFront": "542,343,36,35",
-    "roiBack": "542,343,36,35",
+    "roiFront": "542,342,38,38",
+    "roiBack": "525,330,80,65",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "不勾选 默认邀请"
+    "threshold": 0.9,
+    "description": "未勾选默认邀请队友"
   },
   {
     "itemName": "i_default",
     "imageName": "gi_i_default.png",
-    "roiFront": "541,342,41,39",
-    "roiBack": "541,342,41,39",
+    "roiFront": "542,342,38,38",
+    "roiBack": "525,330,80,65",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "勾选 默认邀请"
+    "threshold": 0.9,
+    "description": "默认邀请队友已勾选：棕色圆形浅色勾选"
   },
   {
     "itemName": "gi_cancel",
@@ -335,11 +335,11 @@
   {
     "itemName": "gi_sure",
     "imageName": "gi_gi_sure.png",
-    "roiFront": "670,402,175,60",
-    "roiBack": "670,402,175,60",
+    "roiFront": "665,408,177,63",
+    "roiBack": "630,385,255,115",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "队长邀请 确定"
+    "threshold": 0.9,
+    "description": "战后邀请队友弹窗的黄色确定按钮"
   },
   {
     "itemName": "gi_buff",

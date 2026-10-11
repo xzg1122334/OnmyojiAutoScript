@@ -1,5 +1,11 @@
 # GeneralBattle FSM
 
+## 战斗退出确认
+
+`exit_battle()` 复用 `gb_exit_ensure.png` 识别黄色“确定”。素材对应当前按钮，搜索范围允许按钮小幅移动。退出弹窗显示期间，包括点击间隔尚未到期时，只处理确认按钮，不重复点击背景上的返回按钮；识别到结算或奖励页面后才结束退出流程。
+
+仅截取按钮作为素材；原图和诊断报告保存在 Git 忽略的 `dev_tools/local/battle-exit-confirm`。
+
 `GeneralBattle` 现在按 4 个战斗阶段驱动：
 
 - `_handle_prepare(context, config)`

@@ -33,7 +33,7 @@ main_costume_model = {
         'I_HARVEST_SOUL': f'I_HARVEST_SOUL_{i}',
         'I_HARVEST_GUILD_REWARD': f'I_HARVEST_GUILD_REWARD_{i}',
     }
-    for i in range(1, 18)
+    for i in range(1, 19)
 }
 
 # 战斗主题（使用循环处理常规情况 + 特例处理）

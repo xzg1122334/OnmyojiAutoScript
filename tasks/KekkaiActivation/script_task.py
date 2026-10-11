@@ -72,13 +72,15 @@ class ScriptTask(KU, KekkaiActivationAssets):
     def dict_image_card(self) -> dict:
         return {v: k for k, v in self.dict_card_image.items()}
 
-    @cached_property
+    @property
     def order_targets(self) -> ImageGrid:
         rule = self.config.kekkai_activation.activation_config.card_type
         if rule == CardType.TAIKO:
-            return ImageGrid([self.I_CARDS_KAIKO_6, self.I_CARDS_KAIKO_5])
+            return ImageGrid([self.I_CARDS_KAIKO_6, self.I_CARDS_KAIKO_5,
+                              self.I_CARDS_KAIKO_4, self.I_CARDS_KAIKO_3])
         elif rule == CardType.FISH:
-            return ImageGrid([self.I_CARDS_FISH_6, self.I_CARDS_FISH_5])
+            return ImageGrid([self.I_CARDS_FISH_6, self.I_CARDS_FISH_5,
+                              self.I_CARDS_FISH_4, self.I_CARDS_FISH_3])
         else:
             logger.error('Unknown utilize rule')
             raise ValueError('Unknown utilize rule')
@@ -93,6 +95,7 @@ class ScriptTask(KU, KekkaiActivationAssets):
         self.goto_page(page_guild_card)
         # 太诡异了 为什么有这么长的动画, 那么长的动画先休息一会
         logger.hr('Start activation')
+        selected_in_range = False
         time.sleep(0.5)
         while 1:
             self.screenshot()
@@ -117,9 +120,15 @@ class ScriptTask(KU, KekkaiActivationAssets):
                 return False
             # 如果已经选中这张卡了， 那就激活这张卡
             if card_status and not card_effect:
+                if not selected_in_range:
+                    logger.warning('已有未激活卡，无法确认星级；请先卸下该卡，再由脚本选卡')
+                    self.set_next_run('KekkaiActivation', target=datetime.now() + timedelta(minutes=10))
+                    return False
                 logger.info('Card is selected but not using')
                 while 1:
                     self.screenshot()
+                    if self.handle_activation_confirm():
+                        continue
                     if self.appear(self.I_A_INVITE, threshold=0.8):
                         logger.info('Card is activated')
                         break
@@ -134,6 +143,15 @@ class ScriptTask(KU, KekkaiActivationAssets):
             if not card_status and not card_effect:
                 logger.info('Card is not selected also not using')
                 self.screening_card(_config.card_type)
+                selected_in_range = True
+
+    def handle_activation_confirm(self) -> bool:
+        """确认本轮放卡的寄养位置设置；弹窗存在时阻止点击底层激活按钮。"""
+        if not self.appear(self.I_A_ACTIVATION_CONFIRM_DIALOG):
+            return False
+        if self.appear_then_click(self.I_A_ACTIVATION_CONFIRM, interval=0.6):
+            logger.info('Confirm realm card activation: slot 1 public, slot 2 private')
+        return True
 
     def check_card_status(self, screenshot=False) -> bool:
         """
@@ -235,6 +253,32 @@ class ScriptTask(KU, KekkaiActivationAssets):
                     if self.click(target, interval=1):
                         continue
 
+    def _allowed_card_rows(self, matches):
+        """按星星行底部合并模板；六星也参与识别，防止误匹配成低星卡。"""
+        con = self.config.kekkai_activation.activation_config
+        groups = []
+        ordered_matches = sorted(matches or [], key=lambda item: item[2][1] + item[2][3])
+        for target, score, area in ordered_matches:
+            if score < target.threshold:
+                continue
+            bottom = area[1] + area[3]
+            for group in groups:
+                group_bottom = group[0][2][1] + group[0][2][3]
+                if abs(bottom - group_bottom) <= 18:
+                    group.append((target, score, area))
+                    break
+            else:
+                groups.append([(target, score, area)])
+
+        rows = []
+        for group in groups:
+            stars = [int(self.dict_image_card[target].value[-1]) for target, _, _ in group]
+            if any(not con.min_card_star <= star <= con.max_card_star for star in stars):
+                continue
+            target, _, area = max(group, key=lambda item: item[1])
+            rows.append((area[1] + area[3], int(self.dict_image_card[target].value[-1])))
+        return rows
+
     def check_card_num(self):
         rule = self.config.kekkai_activation.activation_config.card_type
         if rule == CardType.TAIKO:
@@ -251,6 +295,10 @@ class ScriptTask(KU, KekkaiActivationAssets):
         while 1:
             self.screenshot()
             results = self.O_CHECK_CARD_NUMBER.detect_and_ocr(self.device.image)
+            matches = self.order_targets.find_everyone(
+                self.device.image, frame_id=self.device.image_frame_id,
+            )
+            allowed_rows = self._allowed_card_rows(matches)
             ocr_count += 1
             # 第一步：筛选出包含 "体力或者勾玉" 的结果
             filtered_results = [result for result in results if check_card in result.ocr_text]
@@ -259,17 +307,26 @@ class ScriptTask(KU, KekkaiActivationAssets):
             # 第二步：提取数字并按数字排序
             numeric_results = []
             for result in filtered_results:
+                # 收益文字在同一张卡的星星行上方；跨卡或不明确的匹配不使用。
+                text_y = self.O_CHECK_CARD_NUMBER.roi[1] + (
+                    result.box[0][1] + result.box[2][1]
+                ) / 2
+                row_stars = [
+                    star for bottom, star in allowed_rows
+                    if 0 < bottom - text_y < 110
+                ]
+                if len(row_stars) != 1:
+                    continue
                 # 使用正则表达式提取所有数字
                 numbers = [int(num) for num in re.findall(r'\d+', result.ocr_text)]
                 if numbers:  # 如果提取到数字
                     if numbers[0] < min_card_num:
                         continue
-                    numeric_results.append((numbers[0], result))  # 按第一个数字排序
+                    numeric_results.append((numbers[0], result, row_stars[0]))
 
             if numeric_results:
                 # 按数字大到小排序
-                sorted_results = [result for _, result in sorted(numeric_results, key=lambda x: x[0], reverse=True)]
-                max_result = sorted_results[0]  # 获取数字最大的结果对象
+                _, max_result, star = max(numeric_results, key=lambda item: item[0])
 
                 box = max_result.box  # 获取边界框坐标
                 x_min = self.O_CHECK_CARD_NUMBER.roi[0] + box[0][0]
@@ -279,7 +336,7 @@ class ScriptTask(KU, KekkaiActivationAssets):
                 roi = int(x_min), int(y_min), int(width), int(height)
 
                 target = RuleClick(roi_front=roi, roi_back=roi, name="tmpclick")
-                logger.info(f"选择挂卡: [{max_result.ocr_text}] {roi}")
+                logger.info(f"选择挂卡: {star}星 [{max_result.ocr_text}] {roi}")
 
                 return target
             else:

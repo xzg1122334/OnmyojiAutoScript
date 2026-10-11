@@ -619,11 +619,17 @@ class GeneralInvite(BaseTask, GeneralInviteAssets):
             # 有可能是挑战失败的
             if self.appear(self.I_I_DEFAULT) or self.appear(self.I_I_NO_DEFAULT):
                 logger.info('Click default invite')
+                default_wait = Timer(5).start()
                 while 1:
                     self.screenshot()
                     if self.is_in_room(False):
                         break
+                    if not self.appear(self.I_GI_SURE):
+                        break
                     if self.appear(self.I_I_DEFAULT):
+                        break
+                    if default_wait.reached():
+                        logger.warning('默认邀请勾选状态未确认，继续确认本次邀请')
                         break
                     if self.appear_then_click(self.I_I_NO_DEFAULT, interval=1):
                         continue

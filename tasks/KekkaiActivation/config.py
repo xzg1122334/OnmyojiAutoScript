@@ -2,7 +2,7 @@
 # @author runhey
 # github https://github.com/runhey
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from tasks.Component.config_base import ConfigBase, TimeDelta
 from tasks.Component.config_scheduler import Scheduler
 from tasks.Utils.config_enum import ShikigamiClass
@@ -21,6 +21,8 @@ class ActivationScheduler(Scheduler):
 
 class ActivationConfig(BaseModel):
     card_type: CardType = Field(default=CardType.TAIKO, description='card_rule_help')
+    min_card_star: int = Field(default=3, ge=3, le=6, description='放卡最低星级（包含该星级）')
+    max_card_star: int = Field(default=5, ge=3, le=6, description='放卡最高星级（包含该星级）')
     min_taiko_num: int = Field(default=8, description='挂卡太鼓每小时最少收益,低于则不挂卡')
     min_fish_num: int = Field(default=16, description='挂卡斗鱼每小时最少收益,低于则不挂卡')
     exchange_before: bool = Field(default=True, description='exchange_before_help')
@@ -28,6 +30,12 @@ class ActivationConfig(BaseModel):
     auto_fill: bool = Field(default=False, description='auto_fill_help')
     shikigami_class: ShikigamiClass = Field(default=ShikigamiClass.N, description='shikigami_class_help')
     card_not_found_count: int = Field(default=0, description='未发现卡次数')
+
+    @model_validator(mode='after')
+    def validate_star_range(self):
+        if self.min_card_star > self.max_card_star:
+            raise ValueError('放卡最低星级不能高于最高星级')
+        return self
 
 
 class KekkaiActivation(ConfigBase):

@@ -9,7 +9,7 @@ from cached_property import cached_property
 from datetime import datetime
 from datetime import timedelta, time
 from module.base.timer import Timer
-from module.exception import TaskEnd
+from module.exception import TaskEnd, GameStuckError
 from module.logger import logger
 from tasks.BondlingFairyland.assets import BondlingFairylandAssets
 from tasks.BondlingFairyland.config import BondlingMode, BondlingClass, BondlingSwitchSoul, BondlingConfig, UserStatus
@@ -23,10 +23,6 @@ from tasks.GameUi.game_ui import GameUi
 from tasks.GameUi.matcher import any_of
 from tasks.GameUi.page import page_main, page_bondling_fairyland, page_shikigami_records, page_mall
 from tasks.RichMan.assets import RichManAssets
-
-
-class BondlingNumberMax(Exception):
-    pass
 
 
 class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, BondlingFairylandAssets, RichManAssets):
@@ -151,8 +147,14 @@ class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, 
             def create_bond_team():
                 nonlocal no_plate
                 click_count = 0
+                start_wait = Timer(30).start()
                 while 1:
                     self.screenshot()
+                    if start_wait.reached():
+                        raise GameStuckError('契灵求援未进入房间，请检查弹窗或契灵容量')
+                    if self.handle_plate_limit_confirm():
+                        sleep(0.2)
+                        continue
                     if self.appear(self.I_GI_IN_ROOM):
                         return True
                     if self.appear_then_click(self.I_C_PLATE_LESS, interval=1):
@@ -160,10 +162,7 @@ class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, 
                         no_plate = True
                         return False
                     if click_count >= 6:
-                        logger.error('Click fire failed')
-                        logger.error(
-                            'You might need to check your bondling number. It most possibly arrived to the max 500')
-                        raise BondlingNumberMax
+                        raise GameStuckError('契灵求援未进入房间，请检查弹窗或契灵容量')
                     if self.check_and_invite(True):
                         continue
                     # 某些活动的时候出现 “选择共鸣的阴阳师”
@@ -357,14 +356,10 @@ class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, 
                 if not capture_setting_checked:
                     self.capture_setting(bondling_config.bondling_mode)
                     capture_setting_checked = True
-                try:
-                    # 执行捕捉
-                    if self.run_catch(bondling_config, battle_config):
-                        logger.info(f'Catch successful and current ball number: {current_ball_index} ')
-                    else:
-                        break
-                except BondlingNumberMax:
-                    logger.error('Bondling number max, exit')
+                # 执行捕捉；未进入战斗应报告实际失败，不推断契灵数量已满。
+                if self.run_catch(bondling_config, battle_config):
+                    logger.info(f'Catch successful and current ball number: {current_ball_index} ')
+                else:
                     break
             else:
                 # 否则就是模式1
@@ -627,28 +622,46 @@ class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, 
         limit_time = self.config.bondling_fairyland.bondling_config.limit_time
         return timedelta(hours=limit_time.hour, minutes=limit_time.minute, seconds=limit_time.second)
 
+    def handle_plate_limit_confirm(self) -> bool:
+        """式盘上限仅影响奖励获取；处理提醒后继续本次挑战。"""
+        if not self.appear(self.I_PLATE_LIMIT_DIALOG):
+            return False
+        # 复用当前棕色勾选框和黄色确定按钮，不能点击已打勾的状态。
+        if self.appear(self.I_I_NO_DEFAULT):
+            if self.appear_then_click(self.I_I_NO_DEFAULT, interval=1):
+                logger.info('式盘数量上限：勾选当天不再提醒')
+            return True
+        if self.appear_then_click(self.I_GI_SURE, interval=1):
+            logger.info('式盘数量上限：确认继续挑战')
+        # 点击冷却期间也拦住底层挑战，等待弹窗消失。
+        return True
+
     def run_alone(self):
         """
         单人 挑战， 主要是结契时的挑战
         """
         click_count = 0
+        start_wait = Timer(30).start()
         while 1:
             self.screenshot()
+            if start_wait.reached():
+                raise GameStuckError('契灵挑战未进入战斗，请检查弹窗或契灵容量')
+            if self.handle_plate_limit_confirm():
+                click_count = 0
+                sleep(0.2)
+                continue
             if not self.appear(self.I_BALL_FIRE, threshold=0.7):
                 return True
             # 盘子少于10个停止,略过具体数量防止ocr识别错误导致退出
             if self.appear_then_click(self.I_C_PLATE_LESS, interval=1):
                 return False
-            if self.appear_then_click(self.I_BALL_FIRE, interval=1):
-                click_count += 1
-                continue
-            if click_count >= 3:
-                logger.error('Click fire failed')
-                logger.error('You might need to check your bondling number. It most possibly arrived to the max 500')
-                raise BondlingNumberMax
             # 某些活动的时候出现 “选择共鸣的阴阳师”
             if self.appear_then_click(self.I_UI_CONFIRM, interval=1):
                 continue
+            if click_count < 3 and self.appear_then_click(self.I_BALL_FIRE, interval=1):
+                click_count += 1
+                continue
+            sleep(0.2)
 
     def wait_battle(self, wait_time: time) -> bool:
         """

@@ -168,8 +168,8 @@ class CostumeShikigamiAssets:
 	I_SOU_SWITCH_4_12 = RuleImage(roi_front=(979,602,28,25), roi_back=(973,598,39,34), threshold=0.8, method="Template matching", file="./tasks/Component/CostumeShikigami/sk12/sk12_sou_switch_4_12.png")
 	# description 
 	I_SOU_TEAM_PRESENT_12 = RuleImage(roi_front=(734,77,100,41), roi_back=(726,71,115,54), threshold=0.8, method="Template matching", file="./tasks/Component/CostumeShikigami/sk12/sk12_sou_team_present_12.png")
-	# description 
-	I_SOU_SWITCH_SURE_12 = RuleImage(roi_front=(702,401,116,55), roi_back=(690,399,148,64), threshold=0.8, method="Template matching", file="./tasks/Component/CostumeShikigami/sk12/sk12_sou_switch_sure_12.png")
+	# 预设御魂更换弹窗的黄色确定按钮
+	I_SOU_SWITCH_SURE_12 = RuleImage(roi_front=(665,408,177,63), roi_back=(630,385,255,115), threshold=0.9, method="Template matching", file="./tasks/Component/CostumeShikigami/sk12/sk12_sou_switch_sure_12.png")
 	# description 
 	I_SOUL_PRESET_12 = RuleImage(roi_front=(342,85,74,31), roi_back=(338,77,83,44), threshold=0.8, method="Template matching", file="./tasks/Component/CostumeShikigami/sk12/sk12_soul_preset_12.png")
 	# description 

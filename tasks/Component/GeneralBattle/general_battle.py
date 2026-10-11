@@ -861,11 +861,12 @@ class GeneralBattle(GeneralBuff, GeneralBattleAssets):
         """
         if skip_first:
             self.screenshot()
-        if not self.appear(self.I_EXIT):
+        if not self.appear(self.I_EXIT_ENSURE) and not self.appear(self.I_EXIT):
             return False
         while True:
             self.screenshot()
-            if self.appear_then_click(self.I_EXIT_ENSURE, interval=0.8):
+            if self.appear(self.I_EXIT_ENSURE):
+                self.appear_then_click(self.I_EXIT_ENSURE, interval=0.8)
                 continue
             if GameUi.get_current_page(self) in (page_battle_result, page_reward):
                 break

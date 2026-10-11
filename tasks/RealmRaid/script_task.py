@@ -460,15 +460,18 @@ class ScriptTask(GeneralBattle, GameUi, SwitchSoul, RealmRaidAssets):
         失败界面再次挑战
         :return: 是否再战成功
         """
-        self.wait_until_appear(self.I_FIRE_AGAIN)
         while True:
             self.screenshot()
+            # 再战弹窗和按钮点击间隔都应阻止点击背景上的再战入口。
+            if self.appear(self.I_FRESH_ENSURE):
+                if self.appear_then_click(self.I_SHOW_AGAIN, interval=2):
+                    continue
+                self.appear_then_click(self.I_FRESH_ENSURE, interval=0.8)
+                continue
             if self.appear(self.I_EXIT):
                 logger.info(f'Click fire again success')
                 return True
             if self.appear_then_click(self.I_SHOW_AGAIN, interval=2):
-                continue
-            if self.appear_then_click(self.I_FRESH_ENSURE, interval=2):
                 continue
             if self.appear_then_click(self.I_FIRE_AGAIN, interval=2):
                 continue

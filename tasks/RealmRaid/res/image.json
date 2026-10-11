@@ -128,11 +128,11 @@
   {
     "itemName": "fresh_ensure",
     "imageName": "res_fresh_ensure.png",
-    "roiFront": "672,403,173,59",
-    "roiBack": "672,403,173,59",
+    "roiFront": "665,408,177,63",
+    "roiBack": "630,385,255,115",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "刷新确认/再战确认"
+    "threshold": 0.9,
+    "description": "刷新或再次挑战弹窗的黄色确定按钮"
   },
   {
     "itemName": "unlock_2",

@@ -214,5 +214,23 @@
     "method": "Template matching",
     "threshold": 0.8,
     "description": "斗鱼3"
+  },
+  {
+    "itemName": "a_activation_confirm_dialog",
+    "imageName": "a_a_activation_confirm_dialog.png",
+    "roiFront": "450,260,410,62",
+    "roiBack": "420,230,465,140",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "激活结界卡时的位置一公开、位置二私有确认弹窗"
+  },
+  {
+    "itemName": "a_activation_confirm",
+    "imageName": "a_a_activation_confirm.png",
+    "roiFront": "677,383,177,61",
+    "roiBack": "635,355,255,140",
+    "method": "Template matching",
+    "threshold": 0.9,
+    "description": "寄养位置确认弹窗的黄色确定按钮"
   }
 ]

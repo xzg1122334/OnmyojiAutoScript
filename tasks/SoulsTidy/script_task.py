@@ -64,6 +64,8 @@ class ScriptTask(GameUi, SoulsTidyAssets):
             feed_count = 0
             while 1:
                 self.screenshot()
+                if self.handle_greed_feed_confirm():
+                    continue
                 if self.appear(self.I_ST_UNSELECTED):
                     self.ui_click_until_disappear(self.I_ST_UNSELECTED)
                     continue
@@ -78,6 +80,8 @@ class ScriptTask(GameUi, SoulsTidyAssets):
         # 关闭贪吃鬼, 进入奉纳
         while 1:
             self.screenshot()
+            if self.handle_greed_feed_confirm():
+                continue
             if self.appear(self.I_ST_CAT):
                 # 出现招财猫
                 break
@@ -126,6 +130,14 @@ class ScriptTask(GameUi, SoulsTidyAssets):
                 logger.info('Donate one')
 
         logger.info('Bongna done')
+
+    def handle_greed_feed_confirm(self) -> bool:
+        """确认按进食习惯吞噬已弃置御魂，弹窗存在时阻止点击底层界面。"""
+        if not self.appear(self.I_ST_FEED_CONFIRM_DIALOG):
+            return False
+        if self.appear_then_click(self.I_ST_FEED_CONFIRM, interval=0.5):
+            logger.info('Confirm feeding discarded souls')
+        return True
 
     def pre_confirm(self):
         """前置确认：确保是按照等级来排序的"""

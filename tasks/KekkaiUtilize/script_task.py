@@ -38,10 +38,13 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
     utilize_lazy_mode_active = False
     ap_max_num = 0
     jade_max_num = 0
+    utilize_best_taiko_star = 0
     utilize_threshold_filtered = False
 
     # 同类型、同星级结界卡的最高奖励。达到最高值后，本轮不再打开同档卡片。
     CARD_TIER_INFO = {
+        # 三星收益上限尚未核实，持续比较同档卡片，不按上限提前跳过。
+        CardClass.TAIKO3: ('太鼓', 3, None),
         CardClass.TAIKO4: ('太鼓', 4, 59),
         CardClass.TAIKO5: ('太鼓', 5, 67),
         CardClass.TAIKO6: ('太鼓', 6, 76),
@@ -123,13 +126,13 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                         UtilizeRule.DEFAULT: '太鼓或斗鱼',
                     }.get(con.utilize_rule, '目标结界卡')
                     message = (
-                        f'未检测到四星及以上{target_name}, '
+                        f'未检测到{self._minimum_utilize_star}星及以上{target_name}, '
                         '5分钟后再次执行蹭卡'
                     )
                     logger.warning(message)
                     self.push_notify(content=message)
                 else:
-                    logger.warning('已检测到四星及以上结界卡，但未能完成选择，5分钟后重试')
+                    logger.warning('已检测到符合策略的结界卡，但未能完成选择，5分钟后重试')
                 self.set_next_run(task='KekkaiUtilize', target=datetime.now() + timedelta(minutes=5))
                 return True
 
@@ -373,6 +376,11 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
         time.sleep(0.5)
 
     @property
+    def _minimum_utilize_star(self) -> int:
+        rule = self.config.kekkai_utilize.utilize_config.utilize_rule
+        return 3 if rule == UtilizeRule.TAIKO and not self.utilize_lazy_mode_active else 4
+
+    @property
     def _utilize_thresholds(self) -> dict[str, int]:
         """蹭卡最低收益阈值（太鼓/斗鱼各自独立，0 表示不限制）。"""
         con = self.config.kekkai_utilize.utilize_config
@@ -390,7 +398,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
         elif rule == UtilizeRule.FISH:
             return ImageGrid([self.I_U_FISH_6, self.I_U_FISH_5, self.I_U_FISH_4])
         elif rule == UtilizeRule.TAIKO:
-            return ImageGrid([self.I_U_TAIKO_6, self.I_U_TAIKO_5, self.I_U_TAIKO_4])
+            return ImageGrid([self.I_U_TAIKO_6, self.I_U_TAIKO_5, self.I_U_TAIKO_4, self.I_U_TAIKO_3])
         else:
             logger.error('Unknown utilize rule')
             raise ValueError('Unknown utilize rule')
@@ -534,7 +542,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
         return False
 
     def _finish_low_value_utilize(self) -> bool:
-        """已扫描范围没有四星以上策略卡时，失败并延迟任务。"""
+        """已扫描范围没有符合策略的卡时，失败并延迟任务。"""
         rule = self.config.kekkai_utilize.utilize_config.utilize_rule
         scan_scope = (
             '当前优先分组'
@@ -553,7 +561,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
             )
         else:
             message = (
-                f'{scan_scope}全是当前策略低价值卡，未检测到四星及以上{target_name}，'
+                f'{scan_scope}全是当前策略低价值卡，未检测到{self._minimum_utilize_star}星及以上{target_name}，'
                 '任务失败，20分钟后重试'
             )
         logger.error(message)
@@ -616,7 +624,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                 return False
             logger.info(
                 f'分组[{target_friend.value}]没有当前策略可用的'
-                '四星及以上结界卡'
+                f'{self._minimum_utilize_star}星及以上结界卡'
             )
 
         if selected_friend is None:
@@ -849,6 +857,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
     ) -> bool | None:
         """浏览当前分组，计算最高收益并确保最终重新选中该卡。"""
         self.ap_max_num, self.jade_max_num = 0, 0
+        self.utilize_best_taiko_star = 0
         self.utilize_current_group_has_eligible_card = False
         self.utilize_current_group_scan_completed = False
         try:
@@ -899,7 +908,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                     )
                     return None
                 if self.utilize_current_group_has_eligible_card:
-                    logger.warning('🔄 检测到四星以上目标，但奖励数值识别失败')
+                    logger.warning('🔄 检测到符合策略的目标，但奖励数值识别失败')
                     return False
                 if not self.utilize_current_group_scan_completed:
                     logger.warning('当前好友分组未能完整扫描，不能判定为全是低价值卡')
@@ -960,6 +969,12 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                     target_to_card_class(target)
                 )
                 if tier_info and tier_info[0] != best_card_type:
+                    continue
+                if (
+                    self.config.kekkai_utilize.utilize_config.utilize_rule == UtilizeRule.TAIKO
+                    and self.utilize_best_taiko_star
+                    and (not tier_info or tier_info[1] != self.utilize_best_taiko_star)
+                ):
                     continue
 
                 self.C_SELECT_CARD.roi_front = area
@@ -1118,7 +1133,7 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                                 f'✅ 已确认{star}星{card_type}奖励，'
                                 f'后续跳过{star}星以下同类型卡片'
                             )
-                        if card_value >= tier_max:
+                        if tier_max is not None and card_value >= tier_max:
                             maxed_card_classes.add(card_class)
                             logger.info(
                                 f'✅ {star}星{card_type}达到当前档位最高奖励: '
@@ -1131,9 +1146,20 @@ class ScriptTask(GameUi, ReplaceShikigami, KekkaiUtilizeAssets):
                 logger.info(f'🔍 识别卡片: {card_type} | 当前值: {card_value}, 最优值: {current_record}')
 
                 # 更新最佳记录
-                if card_value > current_record:
+                prefer_taiko_stars = (
+                    self.config.kekkai_utilize.utilize_config.utilize_rule == UtilizeRule.TAIKO
+                    and card_type == '太鼓' and tier_info is not None
+                )
+                is_better = card_value > current_record
+                if prefer_taiko_stars:
+                    is_better = (tier_info[1], card_value) > (
+                        self.utilize_best_taiko_star, current_record,
+                    )
+                if is_better:
                     logger.info(f'📈 更新记录: {card_type} | {current_record} → {card_value}')
                     setattr(self, record_attr, card_value)
+                    if prefer_taiko_stars:
+                        self.utilize_best_taiko_star = tier_info[1]
 
                 if self._is_strategy_maximum_reward(card_type, card_value):
                     logger.info(
