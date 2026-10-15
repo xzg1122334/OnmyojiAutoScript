@@ -83,7 +83,7 @@ class BondlingFairylandAssets:
 	# 大盘子 
 	O_B_HIGH_NUMBER = RuleOcr(roi=(928,17,94,30), area=(928,17,94,30), mode="DigitCounter", method="Default", keyword="", name="b_high_number")
 	# 鸣契石 
-	O_B_STONE_NUMBER = RuleOcr(roi=(1135,16,78,32), area=(1135,16,78,32), mode="DigitCounter", method="Default", keyword="", name="b_stone_number")
+	O_B_STONE_NUMBER = RuleOcr(roi=(1135,18,78,28), area=(1135,18,78,28), mode="DigitCounter", method="Default", keyword="", name="b_stone_number")
 	# 召唤契灵数量 
 	O_B_SUMMON_BALL_NUMBER = RuleOcr(roi=(546,540,100,45), area=(546,540,100,45), mode="Single", method="Default", keyword="", name="b_summon_ball_number")
 	# 抓捕契灵剩余数量 

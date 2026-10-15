@@ -37,8 +37,8 @@
   },
   {
     "itemName": "b_stone_number",
-    "roiFront": "1135,16,78,32",
-    "roiBack": "1135,16,78,32",
+    "roiFront": "1135,18,78,28",
+    "roiBack": "1135,18,78,28",
     "mode": "DigitCounter",
     "method": "Default",
     "keyword": "",

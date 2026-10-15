@@ -382,12 +382,25 @@ class ScriptTask(GameUi, GeneralInvite, GeneralRoom, GeneralBattle, SwitchSoul, 
         if not bondling_stone_enable or not self.appear(self.I_STONE_SURE):
             self.ui_click_until_disappear(self.I_STONE_CLOSE, interval=1.2)
             return False
-        cu, res, total = self.O_B_STONE_NUMBER.ocr(self.device.image)
-        # 如果没有石头了
-        if cu == 0 and cu + res == total:
-            self.ui_click_until_disappear(self.I_STONE_CLOSE, interval=1.2)
-            logger.warning(f'已经没有鸣契石召唤契灵了')
-            return False
+        empty_reads = 0
+        for attempt in range(3):
+            self.screenshot()
+            cu, res, total = self.O_B_STONE_NUMBER.ocr(self.device.image)
+            # OCR 失败也会返回 (0, 0, 0)，不能据此判定鸣契石耗尽。
+            if total > 0:
+                if cu > 0:
+                    break
+                empty_reads += 1
+                if empty_reads >= 2:
+                    self.ui_click_until_disappear(self.I_STONE_CLOSE, interval=1.2)
+                    logger.warning('已经没有鸣契石召唤契灵了')
+                    return False
+            else:
+                empty_reads = 0
+                logger.warning(f'鸣契石数量识别失败，重新截图 ({attempt + 1}/3)')
+            sleep(0.3)
+        else:
+            raise GameStuckError('鸣契石数量未能确认，请检查鸣契弹窗；未判定为鸣契石耗尽')
         while 1:
             self.screenshot()
             if not self.appear(self.I_STONE_SURE):
