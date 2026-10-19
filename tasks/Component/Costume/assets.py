@@ -140,8 +140,8 @@ class CostumeAssets:
 
 
 	# Image Rule Assets
-	# 缘结之庭庭院判定
-	I_CHECK_MAIN_18 = RuleImage(roi_front=(551,110,37,56), roi_back=(510,103,135,95), threshold=0.8, method="Template matching", file="./tasks/Component/Costume/main18/main18_check_main_18.png")
+	# 缘结之庭庭院判定：顶部宠物屋图标，兼容底部菜单收起
+	I_CHECK_MAIN_18 = RuleImage(roi_front=(1070,18,29,30), roi_back=(1040,4,72,60), threshold=0.85, method="Template matching", file="./tasks/Component/Costume/main18/main18_check_main_18.png")
 	# 探索
 	I_MAIN_GOTO_EXPLORATION_18 = RuleImage(roi_front=(551,110,37,56), roi_back=(510,103,135,95), threshold=0.75, method="Template matching", file="./tasks/Component/Costume/main18/main18_main_goto_exploration_18.png")
 	# 召唤屋

@@ -11,8 +11,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description="验证缘结之庭识别，截图只读取、不复制。")
 parser.add_argument("screenshots", type=Path, nargs="+", help="1280×720 庭院截图")
 parser.add_argument("--report", type=Path, help="检查报告路径，默认保存在项目 dev_tools/local")
+parser.add_argument("--main-only", action="store_true", help="只验证庭院判定，适用于不同灯笼动画帧")
+parser.add_argument("--negative", type=Path, nargs="*", default=[], help="不应识别为庭院的完整截图")
 args = parser.parse_args()
 sources = [path.resolve() for path in args.screenshots]
+negative_sources = [path.resolve() for path in args.negative]
 report_path = args.report.resolve() if args.report else PROJECT_ROOT / "dev_tools/local/yuanjie-runtime-checks.json"
 os.chdir(PROJECT_ROOT)
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -55,7 +58,9 @@ for name in required:
     assert current.threshold == replacement.threshold
 
 frames = [np.array(Image.open(path).convert("RGB")) for path in sources]
+negative_frames = [np.array(Image.open(path).convert("RGB")) for path in negative_sources]
 assert all(frame.shape == (720, 1280, 3) for frame in frames), "截图需要完整的 1280×720 游戏区域"
+assert all(frame.shape == (720, 1280, 3) for frame in negative_frames)
 manifest = json.loads(Path("tasks/Component/Costume/main18/image.json").read_text(encoding="utf-8"))
 assert len(manifest) == len(required)
 for data in manifest:
@@ -65,9 +70,10 @@ for data in manifest:
     assert not template.info, "Cropped PNGs must contain no screenshot metadata"
 
 report = []
+checked_rules = ["I_CHECK_MAIN"] if args.main_only else required
 runtime = ImageRuntime({"worker_count": 1})
 try:
-    for name in required:
+    for name in checked_rules:
         rule = getattr(rules, main_costume_model[skin][name])
         matches = []
         for frame in frames:
@@ -80,10 +86,18 @@ try:
             matches.append(round(result["score"], 5))
         assert not runtime.match_rule(rule.to_service_payload(), image_bytes=pickle.dumps(np.zeros_like(frames[0])))["matched"]
         report.append({"rule": name, "scores": matches, "threshold": rule.threshold})
+    main_rule = getattr(rules, main_costume_model[skin]["I_CHECK_MAIN"])
+    negative_scores = []
+    for frame in negative_frames:
+        result = runtime.match_rule(main_rule.to_service_payload(), image_bytes=pickle.dumps(frame))
+        assert not result["matched"], ('non-main frame recognized as courtyard', result)
+        negative_scores.append(round(result["score"], 5))
+    if negative_scores:
+        report.append({"rule": "I_CHECK_MAIN", "negative_scores": negative_scores})
 finally:
     runtime.shutdown()
 
 report_path.parent.mkdir(parents=True, exist_ok=True)
 report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(report, indent=2))
-print(f"PASS: schema, translation, existing accounts, rule replacement, {len(frames) * len(required)} positive matches, 5 blank-frame rejections, and privacy-safe crops.")
+print(f"PASS: schema, translation, existing accounts, rule replacement, {len(frames) * len(checked_rules)} positive matches, {len(checked_rules)} blank-frame rejections, {len(negative_frames)} non-main rejections, and privacy-safe crops.")

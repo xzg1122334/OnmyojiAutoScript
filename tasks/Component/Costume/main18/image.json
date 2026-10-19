@@ -2,11 +2,11 @@
   {
     "itemName": "check_main_18",
     "imageName": "main18_check_main_18.png",
-    "roiFront": "551,110,37,56",
-    "roiBack": "510,103,135,95",
+    "roiFront": "1070,18,29,30",
+    "roiBack": "1040,4,72,60",
     "method": "Template matching",
-    "threshold": 0.8,
-    "description": "缘结之庭庭院判定"
+    "threshold": 0.85,
+    "description": "缘结之庭庭院判定：顶部宠物屋图标，兼容底部菜单收起"
   },
   {
     "itemName": "main_goto_exploration_18",
